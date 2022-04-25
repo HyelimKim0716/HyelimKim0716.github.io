@@ -46,7 +46,7 @@ Iterable, Collection, Set, List 은 읽기 전용 interface 이고, MutableItera
 
 '얕은 복사'는 복사 대상의 '주소' 를 참조하고 있으므로 원본 객체와 복사 객체는 동일한 객체라고 볼 수 있다. 만약 얕게 복사한 객체를 수정하면 원본 객체를 사용하는 곳에서 예상치 못한 결과가 발생할 수 있다. 따라서 얕은 복사를 지양하고, 같은 데이터를 가진 객체가 필요하다면 '깊은 복사' 를 해야한다.
 코틀린의 data class 를 사용하면 '깊은 복사'를 하는 `copy` 메서드를 만들어 주는데, 생성자 property 값이 동일한 새로운 객체를 만들어 준다. 특정 property 만 다르게 set 하고 싶다면 아래와 같이 사용할 수 있다. (참고로 지역 변수는 copy 대상에 포함되지 않는다.)
-```aidl
+```
 data class Profile(
     val name: String,
     val company: String,
@@ -61,7 +61,7 @@ val newProfile = profile.copy(name = "Eilish")
 [다른 종류의 변경 가능 지점]
 
 변경 가능한 리스트를 정의해야 한다면 mutable 컬렉션을 사용할 지, var 로 property 를 정의할 지 고민하지 말고, 후자를 택하는 것이 좋다. 
-```aidl
+```
 val list1: MutableList<String> = mutableListOf()
 var list2: List<String> = listOf()
 ```
@@ -69,12 +69,12 @@ mutable 리스트를 사용하는 list1 은 add, update, delete 가 가능하다
 
 [변경 가능 지점 노출하지 말기]
 
-```aidl
+```
 val list: MutableList<String> = mutableListOf()
 fun get(): MutableList<String> = list.copy()
 ```
 
-```aidl
+```
 val storedUsers: MutableMap<Int, String> = mutableMapOf()
 fun get(): Map<Int, String> = storedUsers
 ```
@@ -95,3 +95,55 @@ mutable 객체를 클래스 외부로 노출하는 것은 변경 가능한 지�
 > 리턴 타입은 API 를 잘 모르는 사람에게 전달해 줄 수 있는 중요한 정보입니다. 따라서 리턴 타입은 외부에서 확인할 수 있게 명시적으로 지정해 주는 것이 좋습니다.
 
 안전을 위해 타입을 지정해야 한다는 부분에 공감한다. 대부분의 변수, 함수의 return 타입을 명시하는 것을 선호하나, `profile` 과 같이 변수명과 타입이 같거나 `var number = 0` 과 같이 어떤 개발자가 보아도 타입 추론이 가능한 '변수명' 으로 정의하는 경우에 한해서는 타입을 꼭 명시할 필요는 없다고 생각한다. 
+
+### 아이템5. 예외를 활용해 코드에 제한을 걸어라
+`require 블록`, `check 블록`, `assert 블록`, `return 또는 throw 와 함께 활용하는 Elvis 연산자` 를 사용하면 기대치 못한 동작을 하지 않도록 예방하고, 가독성을 높일 수 있다.
+
+[아규먼트]
+```
+fun sendEmail(user: User, message: String) {
+    requireNotNull(user.email)
+    require(isValidEmail(user.email)) {  "User email is not valid"  }
+}
+```
+
+`require` 를 사용하면 **함수의 argument** 의 제한을 확인하고, 만족하지 않을 경우 IllegalArgumentException 을 발생시킬 수 있다. (람다를 활용한 메시지 정의 가능) 위 예와 같이 로그인 UseCase 내 정의된 함수에서 email 의 유효성을 검사할 수 있다.
+
+[상태]
+```
+fun update(profile: Profile?) {
+    requireNotNull(profile)
+    check(isInitialized)
+}
+```
+
+어떤 객체가 사용 가능한 시점에 호출되어야 하는 함수이거나, 화면이 그려졌을 때 사용해야 하는 함수로 제한해야 하는 경우, `check` 를 사용해 확인하며 만족하지 않을 때 IllegalArgumentException 을 발생시킬 수 있다. `check` 는 `require` 와 비슷하나, '상태' 가 올바른지 확인할 때 사용한다. `require` 와 함께 사용하게 된다면 `require` 블록 뒤에 `check` 블록을 배치한다. 만약 
+
+[Assert 계열 함수 사용]
+
+UnitTest 를 활용해 구현한 내용이 정상적으로 동작 하는지 확인하는데, 이 때 `assert` 를 활용한다.
+
+[nullability 와 스마트 캐스팅]
+
+```
+fun handleOuput(output: Output) {
+    require(output is Output.Success)
+    val success: Output.Success = output
+    ...    
+}
+```
+`require` 혹은 `check` 를 사용하면 스마트 캐스팅을 지원하므로 변수를 unpack 하는 용도로 활용할 수 있다.
+
+```
+fun sendEmail(user: User) {
+    val email: String = user.email ?: run {
+        log("email is not a valid format.")
+        return
+    } 
+}
+```
+exception 을 발생시키면 문제가 있는 코드 위치를 바로 알 수 있지만, 사용성을 헤치는 일이므로 꼭 사용해야 하는 경우가 아니면 사용하지 않는다. 따라서 위 처럼 함수 시작 부분에서 return 혹은 throw 를 활용해 nullable 여부를 판단하는 경우도 많다. 함수 내에서 사용되는 변수가 null 이 아닐 때만 사용되어야 한다면 nullable 여부를 확인해 미리 return 하고 스마트 캐스팅된 변수를 활용한다. 
+
+
+### 사용자 정의 오류보다는 표준 오류를 사용하라
+Exception 을 발생시켜야 할 때, `IndexOutOfException`, `IllegalArgumentException` 과 같이 개발자가 이미 알고 있는 표준 라이브러리의 오류를 사용하는 것이 코드를 보는 다른 개발자들이 더 쉽게 이해할 수 있도록 돕는다.
