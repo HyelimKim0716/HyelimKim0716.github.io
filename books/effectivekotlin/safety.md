@@ -37,7 +37,7 @@ val 로 선언하더라도 list 처럼 mutable 한 객체라면 변할 수 있�
 
 * 가변 컬렉션과 읽기 전용 컬렉션 구분하기
 
-![safety_item1_collection.png](collection.png)
+![safety_item1_collection.png](safety_item1_collection.png)
 
 Iterable, Collection, Set, List 은 읽기 전용 interface 이고, MutableIterable, MutableCollection, MutableSet, MutableList 은 읽고 쓸 수 있는 Collection 이다. Iterable<T>.map, Iterable<T>.filter 등은 ArrayList 를 return 하므로 내부 값을 변경할 수 없다는 것은 아니지만, interface 에서 변경 가능 함수를 제공하는 것은 아니다. 이는 외부적으로 immutable 하게 보이므로 안정성을 얻을 수 있다.
 주의해야 할 점은 List 로 선언한 변수 list 를 `if (list is MutableList) list.add(4)` 처럼 다운캐스팅을 하면 안된다는 것이다. immutable 한 collection 사용 계약을 위반하고, 어느 누구도 이와 같은 코드가 중간에 들어갈 거라고 예상하지 못했을 것이다. 필요하다면 `list.toMutableList()` 를 활용해 copy 한 list 를 사용해야 한다. 
