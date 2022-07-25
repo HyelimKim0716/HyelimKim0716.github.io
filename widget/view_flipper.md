@@ -4,6 +4,7 @@
 <img src="view_flipper_banner.gif" width="300">
 
 1. `ViewFlipper` 가 적용될 영역을 아래와 같이 정의한다.
+
     <img src="view_flipper_banner_box.png" width="300">
 
 [view_flipper.xml]
@@ -43,7 +44,8 @@
 ```
 
 2. `ViewFlipper` 에 추가될 'icon' 과 'message n' 이 포함된 커스텀 뷰 xml 을 정의한다.
-   <img src="view_flipper_banner_contents.png" width="300">
+
+    <img src="view_flipper_banner_contents.png" width="300">
 
 [view_flipper_contents.xml]
 ```aidl
