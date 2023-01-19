@@ -146,7 +146,8 @@ exception 을 발생시키면 문제가 있는 코드 위치를 바로 알 수 �
 
 
 ### 아이템6. 사용자 정의 오류보다는 표준 오류를 사용하라
-Exception 을 발생시켜야 할 때, `IndexOutOfException`, `IllegalArgumentException` 과 같이 개발자가 이미 알고 있는 표준 라이브러리의 오류를 사용하는 것이 코드를 보는 다른 개발자들이 더 쉽게 이해할 수 있도록 돕는다.
+Exception 을 발생시켜야 할 때, `IndexOutOfException`, `IllegalArgumentException` 과 같이 개발자가 이미 알고 있는 표준 라이브러리의 오류를 사용하는 것이 코드를 보는 다른 개발자들이 더 쉽게 이해할 수 있도록 돕는다. 
+'오류' 와는 다른 이야기이지만, 여러 개발자가 아는 단어를 사용하는 것이 협업에 도움이 된다는 차원에서 함수명이던 BindingAdapter 의 네이밍이던, 널리 통용되어 사용되는 네이밍으로 정의하는 것이 좋다고 생각한다.
 
 
 ### 아이템7. 결과 부족이 발생할 경우 null 과 Failure 를 사용하라
@@ -157,6 +158,25 @@ Exception 을 발생시켜야 할 때, `IndexOutOfException`, `IllegalArgumentEx
 책에서는 둘 중 첫 번째 방법을 택하는 것이 **예측이 가능한되는 오류**를 표현할 때 좋다고 설명한다. exception 은 정보를 전달하기 위한 수단으로 사용하는 것이 아닌 **잘못된 상황**이 발생했을 때 사용하는 것이 좋다. 왜냐하면 exception 을 처리하는 곳에선 해당 exception 이 정확히 어디에서 발생했는지 tracking 하기 어렵고, 보통은 toast 를 노출하는 등 간단하기 처리하기 때문이다. 
 
 ### 아이템8. 적절하게 null을 처리하라
+`nullable` 값을 처리하는 것은 꽤 귀찮은 일이다. `nullable` 여부에 따라 분기를 쳐야하는데, 해당 객체를 외부에서 참조한다면 배로 귀찮아질 수 있다. 따라서 null 은 꼭 필요한 경우에만 명확한 의미를 가지면서 사용하는 것이 좋다. 만약 무언가 없다는 것을 나타내고 싶다면 `null` 이 아닌 빈 컬렉션을 사용하는 것이 일반적이다.
+
+
+[null을 안전하게 처리하기]
+1. 안전 호출(safe call) : `?.` 사용
+2. 스마트 캐스팅(smart casting)
+   * ex. `if (printer != null) printer.print()`
+3. Elvis 연산자 사용 : 오른쪽에 return 또는 throw 를 포함한 모든 표현식 허용 : `?:` 사용
+    * return, throw 모두 Nothing(모든 타입의 서브타입)을 리턴하게 설계되어 가능함
+
+* [참고] 방어적 프로그래밍과 공격적 프로그래밍
+  * 방어적 프로그래밍: 모든 가능성을 올바른 방식으로 처리하는 것(ex. null 일 때는 출력하지 않기)
+  * 공격적 프로그래밍: 예상치못한 상황이 발생했을 때, require, check, assert 등을 사용해 개발자에게 알려 수정하게 만드는 방법
+
+    
+[오류 throw하기]
+`throw`, `!!`, `requireNotNull`, `checkNotNull` 등을 활용 
+
+
 
 
 ### 아이템9. use를 사용하여 리소스를 닫아라
