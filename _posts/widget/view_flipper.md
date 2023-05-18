@@ -10,7 +10,7 @@
 [view_flipper.xml]
 
 ```
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.constraintlayout._posts.widget.ConstraintLayout
     android:id="@+id/box_banner"
     android:layout_width="match_parent"
     android:layout_height="46dp"
@@ -40,7 +40,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout._posts.widget.ConstraintLayout>
 ```
 
 2. `ViewFlipper` 에 추가될 'icon' 과 'message n' 이 포함된 커스텀 뷰 xml 을 정의한다.
@@ -50,7 +50,7 @@
 [view_flipper_contents.xml]
 ```aidl
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout._posts.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -79,7 +79,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout._posts.widget.ConstraintLayout>
 
 
 ```
