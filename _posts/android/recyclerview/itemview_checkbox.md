@@ -1,0 +1,2 @@
+RecyclerView 의 ItemView 에 CheckBox 를 정의하고 DataBinding 으로 android:checked 와 android:onCheckedChanged 를 사용하는 경우, 일부 itemView 에서 onCreateViewHolder() 를 호출할 때 onCheckedChanged() 가 호출되었다.
+사용자가 직접 checked 를 변경하지 않아도 onCheckedChanged 가 호출되어 불필요한 로직을 수행하므로, android:onClick 을 사용하여 checked 상태를 확인하는 것이 좋겠다. 
